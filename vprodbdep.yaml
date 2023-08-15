@@ -5,10 +5,10 @@ metadata:
   labels:
     app: vprodb
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: vprodb
+  replicas: 1
   template:
     metadata:
       labels:
@@ -16,30 +16,16 @@ spec:
     spec:
       containers:
       - name: vprodb
-        image: suryanshu185/vprofiledb
-        volumeMounts:
-          - mountPath: /var/lib/mysql
-            name: vpro-db-data
+        image: vprofile/vprofiledb
         ports:
         - name: vprodb-port
           containerPort: 3306
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: app-secret
-              key: db-pass
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1Gi"
-            cpu: "1"
-      nodeSelector:
-        zone: us-east-1a
-      volumes:
-        - name: vpro-db-data
-          awsElasticBlockStore:
-            volumeID: vol-07aeb28a80553b038
-            fsType: ext4
+        env: 
+         - name: MYSQL_ROOT_PASSWORD
+           valueFrom:
+             secretKeyRef:
+               name: app-secret
+               key: db-pass
+#        env:
+#         - name: MYSQL_ROOT_PASSWORD
+#           value: "vprodbpass"
