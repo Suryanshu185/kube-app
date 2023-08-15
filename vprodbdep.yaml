@@ -18,7 +18,7 @@ spec:
       - name: vprodb
         image: suryanshu185/vprofiledb
         volumeMounts:
-          - mountPath: var/lib/mysql
+          - mountPath: /var/lib/mysql
             name: vpro-db-data
         ports:
         - name: vprodb-port
@@ -31,15 +31,16 @@ spec:
               key: db-pass
       nodeSelector: 
         zone: us-east-1b
-      Volumes:
-        - name:vpro-db-data
-        awsElasticBlockStore:
-          volumeID: vol-07aeb28a80553b038
-          fsType: ext4
+      volumes:
+        - name: vpro-db-data
+          awsElasticBlockStore:
+            volumeID: vol-07aeb28a80553b038
+            fsType: ext4
       initContainers:
         - name: busybox
           image: busybox:latest
-          args: ["rm","rf","/var/lib/mysql/lost+found"]
+          args: ["rm", "-rf", "/var/lib/mysql/lost+found"]
           volumeMounts:
             - mountPath: /var/lib/mysql
               name: vpro-db-data
+
