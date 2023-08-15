@@ -19,11 +19,11 @@ spec:
           image: suryanshu185/vprofiledb:latest
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "250m"
+              memory: "1Gi"  # Adjust based on your application needs
+              cpu: "250m"    # Adjust based on your application needs
             limits:
-              memory: "1Gi"
-              cpu: "500m"
+              memory: "2Gi"  # Adjust based on your application needs
+              cpu: "500m"    # Adjust based on your application needs
           ports:
             - containerPort: 3306
           env:
@@ -40,5 +40,7 @@ spec:
           awsElasticBlockStore:
             volumeID: vol-07aeb28a80553b038
             fsType: ext4
+            volumeSize: 3Gi  # Set the volume size to 3GB
       nodeSelector:
         zone: us-east-1a
+
