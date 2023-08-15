@@ -5,7 +5,6 @@ metadata:
   labels:
     app: vprodb
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: vprodb
@@ -15,32 +14,31 @@ spec:
         app: vprodb
     spec:
       containers:
-        - name: vprodb
-          image: suryanshu185/vprofiledb:latest
-          resources:
-            requests:
-              memory: "1Gi"  # Adjust based on your application needs
-              cpu: "250m"    # Adjust based on your application needs
-            limits:
-              memory: "2Gi"  # Adjust based on your application needs
-              cpu: "500m"    # Adjust based on your application needs
-          ports:
-            - containerPort: 3306
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: app-secret
-                  key: db-pass
-          volumeMounts:
-            - mountPath: /var/lib/mysql
-              name: vpro-db-data
-      volumes:
+      - name: vprodb
+        image: suryanshu185/vprofiledb
+        volumeMounts:
+          - mountPath: var/lib/mysql
+            name: vpro-db-data
+        ports:
+        - name: vprodb-port
+          containerPort: 3306
+        env: 
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: db-pass
+      nodeSelector: 
+        zone: us-east-1b
+      Volumes:
         - name: vpro-db-data
           awsElasticBlockStore:
             volumeID: vol-07aeb28a80553b038
             fsType: ext4
-            volumeSize: 3Gi  # Set the volume size to 3GB
-      nodeSelector:
-        zone: us-east-1a
-
+      initContainers:
+        - name: busybox
+          image: busybox:latest
+          args: ["rm","rf","/var/lib/mysql/lost+found"]
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: vpro-db-data
